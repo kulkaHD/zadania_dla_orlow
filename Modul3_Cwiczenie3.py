@@ -25,7 +25,44 @@ answer4 = "" # wskaż nazwę modelu jako string
 answer5 = "" # odpowiedź podaj w formacie procentowym jako string. Np. '21%'
 
 cars = {}
+# #brands i models są już osobno, NA zamienione na zera i stringi z sales zamienione na liczby
+# for i in zip(brands,models,sales2018,sales2017,sales2016):
+#   brand_models = cars.setdefault(i[0],{})
+#   brand_model_sales = brand_models.setdefault(i[1],{})
+#   brand_model_sales["sales"] = {"2016": i[4], 
+#                                 "2017": i[3],
+#                                 "2018": i[2]}
+for i in zip(models,sales2018,sales2017,sales2016):
+  brand,model = i[0].split(" - ")
+  brand_models = cars.setdefault(brand,{})
+  brand_model_sales = brand_models.setdefault(model,{})
+  brand_model_sales["sales"] = {"2016": 0 if i[3] == "NA" else int(i[3].replace(',',"")),
+                                "2017": 0 if i[2] == "NA" else int(i[2].replace(',',"")),
+                                "2018": 0 if i[1] == "NA" else int(i[1].replace(',',""))}
 
-print(models)
+top_sales_2017 = ("",0)
+for brand in cars.keys():
+  for model in cars[brand].keys():
+    if cars[brand][model]["sales"]["2017"] > top_sales_2017[1]:
+      top_sales_2017 = (model,cars[brand][model]["sales"]["2017"])
 
+print(top_sales_2017[0])
 
+top_sales_2018 = ("",0)
+for brand in cars.keys():
+  brand_sum = 0
+  for model in cars[brand].keys():
+    brand_sum = brand_sum + cars[brand][model]["sales"]["2018"]
+
+  if brand_sum > top_sales_2018[1]:
+    top_sales_2018 = (brand,brand_sum)
+
+print(top_sales_2018[0])
+
+not_sold = 0
+for brand in cars.keys():
+  for model in cars[brand].keys():
+    if cars[brand][model]["sales"]["2016"] == 0 and cars[brand][model]["sales"]["2017"] != 0:
+      not_sold = not_sold + 1
+
+print(not_sold)
